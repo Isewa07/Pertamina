@@ -5,9 +5,9 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                        <h1 class="h3 mb-0 text-gray-800">Product</h1>
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="addProduct"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Add Product</a>
                     </div>
 
                     
@@ -21,42 +21,10 @@
                             <!-- Project Card Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Product</h6>
                                 </div>
                                 <div class="card-body">
-                                    <form id="formAddProduct">
-                                        <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label">Product Name</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="ProductName" name="ProductName" required>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label">Product Price</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
-                                                    class="form-control" id="ProductPrice" name="ProductPrice" required>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label">Product Stock</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
-                                                    class="form-control" id="ProductStock" name="ProductStock" required>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-sm-10 offset-sm-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="ForSale" name="ForSale" value="1">
-                                                    <label class="form-check-label" for="ForSale">
-                                                        For Sale
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button type="button" class="btn btn-primary" id="addBtn">Submit</button>
-                                    </form>
+                                    
                                 </div>
                             </div>                        
                     </div>
@@ -66,8 +34,64 @@
             <!-- End of Main Content -->
 
 
+ <div class="modal" id="modalAdd" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Add Product</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+      <div class="modal-body">
+        <form id="formAddProduct">
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Product Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="ProductName" name="ProductName" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Product Price</label>
+                <div class="col-sm-10">
+                    <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
+                        class="form-control" id="ProductPrice" name="ProductPrice" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Product Stock</label>
+                <div class="col-sm-10">
+                    <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
+                        class="form-control" id="ProductStock" name="ProductStock" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ForSale" name="ForSale" value="1">
+                        <label class="form-check-label" for="ForSale">
+                            For Sale
+                        </label>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="addBtn">Submit</button>
+       
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 <script>
 $(document).ready(function () {
+    $("#addProduct").click(function () {
+        $("#modalAdd").modal("show"); // open modal
+    });
     $("#addBtn").click(function () {
         let name  = $("#ProductName").val().trim();
         let price = $("#ProductPrice").val().trim();
