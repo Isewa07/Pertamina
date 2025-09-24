@@ -48,7 +48,7 @@
                                     <a href="<?php echo site_url('Product/edit_redirect/'.$row->ID); ?>" class="btn btn-warning btn-sm">
                                         Edit
                                     </a>
-                                    <a href="<?php echo site_url('Product/delete/'.$row->ID); ?>" 
+                                    <a href="<?php echo site_url('Product/deleteRedirect/'.$row->ID); ?>" 
                                        class="btn btn-danger btn-sm"
                                        onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
                                         Delete

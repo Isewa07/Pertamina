@@ -89,10 +89,10 @@ class Product extends CI_Controller {
         echo json_encode(['status' => true]);
     }
 
+
     public function deleteRedirect($id)
     {
         $this->m_product->softDeleteProduct($id);
-        echo json_encode(['status' => true]);
         redirect('Product/redirect_view');
     }
 
