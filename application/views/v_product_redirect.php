@@ -3,7 +3,7 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Product</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Redirect Product</h1>
                         <a href="<?php echo site_url('Product/add_redirect'); ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="addProduct"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Add Product</a>
                     </div>
