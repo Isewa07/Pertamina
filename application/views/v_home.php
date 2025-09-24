@@ -32,7 +32,7 @@
                                                 <th>Price</th>
                                                 <th>Stock</th>
                                                 <th>For Sale</th>
-                                                <th>Action Button</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -102,57 +102,53 @@
 
 
 <!-- Modal Edit -->
- <div class="modal" id="modalEdit" tabindex="-1">
-  <div class="modal-dialog">
+ <!-- Modal Edit Product -->
+<div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Edit Product</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditLabel">Edit Product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
       <div class="modal-body">
-        <form id="formAddProduct">
-            <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Product Name</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="ProductName" name="ProductName" required>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Product Price</label>
-                <div class="col-sm-10">
-                    <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
-                        class="form-control" id="ProductPrice" name="ProductPrice" required>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Product Stock</label>
-                <div class="col-sm-10">
-                    <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
-                        class="form-control" id="ProductStock" name="ProductStock" required>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-sm-10 offset-sm-2">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="ForSale" name="ForSale" value="1">
-                        <label class="form-check-label" for="ForSale">
-                            For Sale
-                        </label>
-                    </div>
-                </div>
-            </div>
+        <form id="formEditProduct">
+          <input type="hidden" id="EditProductId" name="product_id">
+
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="EditProductName" name="name" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label>Price</label>
+            <input type="number" id="EditProductPrice" name="price" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label>Stock</label>
+            <input type="number" id="EditProductStock" name="stock" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label>For Sale</label>
+            <select id="EditProductSale" name="is_sale" class="form-control">
+              <option value="1">For Sale</option>
+              <option value="0">Not For Sale</option>
+            </select>
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="editBtn">Submit</button>
-       
+        <button type="button" id="btnSaveEdit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
       </div>
-      </form>
     </div>
   </div>
 </div>
+
+
 
 <script>
 $(document).ready(function () {
@@ -161,6 +157,10 @@ $(document).ready(function () {
         $("#modalAdd").modal("show"); // open modal
     });
     
+    $("#btnEdit").click(function () {
+        $("#modalEdit").modal("show"); // open modal
+    });
+
     let table = $('#productTable').DataTable({
         ajax: {
             url: '<?= site_url('Product/getProduct') ?>',
@@ -186,30 +186,23 @@ $(document).ready(function () {
                 }
             },
             {
-            data: null,
-            render: function (data, type, row) {
-                return `
-                    <button class="btn btn-sm btn-primary btn-edit" data-id="${row.product_id}">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-delete" data-id="${row.product_id}">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                `;
-            },
-            orderable: false,
-            searchable: false
-             }
-            // contoh tambahan kolom:
-            // {
-            //     "data": 'qty',
-            //     "render": function(data, type, row) {
-            //         return data + ` item`;
-            //     }
-            // }
+                data: null,
+                render: function (data, type, row) {
+                    return `
+                        <button class="btn btn-sm btn-primary btn-edit" data-id="${row.ID}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-delete" data-id="${row.ID}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    `;
+                },
+                orderable: false,
+                searchable: false
+            }
         ]
     });
-    
+
     // Add product
     $("#addBtn").click(function () {
         let name  = $("#ProductName").val().trim();
@@ -337,6 +330,113 @@ $(document).ready(function () {
             $(this).removeClass("is-invalid");
         }
     });
+
+    // ==== EDIT BUTTON (delegated on productTable) ====
+    $('#productTable').on('click', '.btn-edit', function () {
+        let id = $(this).data('id');
+        console.log("EDIT ID:", id);
+
+        $.ajax({
+            url: "<?= site_url('Product/getProductById/') ?>" + id,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if (data) {
+                    // toleransi nama field: gunakan apa yang ada (ID / product_id / id)
+                    $("#EditProductId").val(data.ID || data.product_id || data.id);
+                    $("#EditProductName").val(data.Name || data.name);
+                    $("#EditProductPrice").val(data.Price || data.price);
+                    $("#EditProductStock").val(data.Stock || data.stock);
+                    $("#EditProductSale").val(data.Is_sell || data.is_sale);
+                    $("#modalEdit").modal("show");
+                } else {
+                    Swal.fire("Error", "Product not found", "error");
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX getProductById ERROR:", xhr.status, xhr.responseText);
+                Swal.fire("Error", "Failed to fetch product data (see console)", "error");
+            }
+        });
+    });
+
+    // ==== SAVE EDIT ====
+    $("#btnSaveEdit").click(function () {
+        let id    = $("#EditProductId").val();
+        let name  = $("#EditProductName").val().trim();
+        let price = $("#EditProductPrice").val().trim();
+        let stock = $("#EditProductStock").val().trim();
+        let sale  = $("#EditProductSale").val();
+
+        if (name === "" || price === "" || stock === "") {
+            Swal.fire("Warning", "All fields are required", "warning");
+            return;
+        }
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to save changes?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, save it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "<?= site_url('Product/update'); ?>",
+                    type: "POST",
+                    data: {
+                        product_id: id,
+                        name: name,
+                        price: price,
+                        stock: stock,
+                        is_sell: sale
+                    },
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status && res.status === "success") {
+                            Swal.fire("Updated!", "Product has been updated.", "success");
+                            $("#modalEdit").modal("hide");
+                            $('#productTable').DataTable().ajax.reload(null, false);
+                        } else {
+                            Swal.fire("Error", res.message || "Failed to update product", "error");
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error("AJAX update ERROR:", xhr.status, xhr.responseText);
+                        Swal.fire("Error", "Failed to update product (see console)", "error");
+                    }
+                });
+            }
+        });
+    });
+
+    // === HANDLE DELETE ===
+    $(document).on("click", ".btn-delete", function () {
+        let id = $(this).data("id");
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This product will be deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "<?= site_url('Product/delete/') ?>" + id,
+                    type: "POST",
+                    success: function () {
+                        Swal.fire("Deleted!", "Product deleted successfully", "success");
+                        $('#productTable').DataTable().ajax.reload();
+                    },
+                    error: function (xhr) {
+                        Swal.fire("Error", xhr.responseText, "error");
+                    }
+                });
+            }
+        });
+    });
+
 
 });
 </script>

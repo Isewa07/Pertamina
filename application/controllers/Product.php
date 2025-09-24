@@ -6,7 +6,7 @@ class Product extends CI_Controller {
 	 public function __construct()
     {
         parent::__construct();
-        $this->load->model('M_Product'); // load model once
+        $this->load->model('m_product'); // load model once
     }
 
     public function save()
@@ -18,7 +18,7 @@ class Product extends CI_Controller {
             'Is_sell' => $this->input->post('ForSale') ? 1 : 0
         );
 
-        if ($this->M_Product->save($data)) {
+        if ($this->m_product->save($data)) {
             echo json_encode(array("status" => "success"));
         } else {
             echo json_encode(array("status" => "error", "message" => "Failed to insert"));
@@ -27,39 +27,41 @@ class Product extends CI_Controller {
 
     public function getProduct()
     {
-        $data = $this->M_Product->get_all();
+        $data = $this->m_product->get_all();
         echo json_encode($data);
     }
 
     public function getProductById($id)
     {
-        $product = $this->M_Product->get_by_id($id);
-        echo json_encode($product);
+        $data = $this->m_product->getProductById($id);
+        echo json_encode($data);
     }
 
-     public function update($id)
+    public function update()
     {
-        $data = [
-            'name'  => $this->input->post('ProductName'),
-            'price' => $this->input->post('ProductPrice'),
-            'stock' => $this->input->post('ProductStock'),
-            'is_sale' => $this->input->post('ProductSale')
-        ];
+        $id = $this->input->post('product_id');
 
-        if ($this->M_Product->update($id, $data)) {
-            echo json_encode(['status' => 'success']);
+        $data = array(
+            'Name'    => $this->input->post('name'),
+            'Price'   => $this->input->post('price'),
+            'Stock'   => $this->input->post('stock'),
+            'Is_sell' => $this->input->post('is_sell') 
+        );
+
+        $this->load->model('m_product');
+        $updated = $this->m_product->update($id, $data);
+        if ($updated) {
+            echo json_encode(array("status" => "success"));
         } else {
-            echo json_encode(['status' => 'error']);
+            echo json_encode(array("status" => "error", "message" => "Failed to update"));
         }
     }
 
     public function delete($id)
     {
-        if ($this->M_Product->soft_delete($id)) {
-            echo json_encode(['status' => 'success']);
-        } else {
-            echo json_encode(['status' => 'error']);
-        }
+        $this->m_product->softDeleteProduct($id);
+        echo json_encode(['status' => true]);
     }
+
 
 }
