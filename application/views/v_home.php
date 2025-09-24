@@ -79,7 +79,18 @@
                         class="form-control" id="ProductStock" name="ProductStock" required>
                 </div>
             </div>
-            <div class="row mb-3">
+
+             <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">For Sale</label>
+                <div class="col-sm-10">
+                    <select id="ProductSale" name="is_sale" class="form-control">
+                        <option value="1">For Sale</option>
+                        <option value="0">Not For Sale</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- <div class="row mb-3">
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="ForSale" name="ForSale" value="1">
@@ -88,7 +99,7 @@
                         </label>
                     </div>
                 </div>
-            </div>
+            </div> -->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -102,7 +113,6 @@
 
 
 <!-- Modal Edit -->
- <!-- Modal Edit Product -->
 <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -123,12 +133,12 @@
 
           <div class="form-group">
             <label>Price</label>
-            <input type="number" id="EditProductPrice" name="price" class="form-control">
+            <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" id="EditProductPrice" name="price" class="form-control">
           </div>
 
           <div class="form-group">
             <label>Stock</label>
-            <input type="number" id="EditProductStock" name="stock" class="form-control">
+            <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" id="EditProductStock" name="stock" class="form-control">
           </div>
 
           <div class="form-group">
@@ -331,7 +341,7 @@ $(document).ready(function () {
         }
     });
 
-    // ==== EDIT BUTTON (delegated on productTable) ====
+    // ==== EDIT BUTTON  ====
     $('#productTable').on('click', '.btn-edit', function () {
         let id = $(this).data('id');
         console.log("EDIT ID:", id);
@@ -342,7 +352,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 if (data) {
-                    // toleransi nama field: gunakan apa yang ada (ID / product_id / id)
+                    
                     $("#EditProductId").val(data.ID || data.product_id || data.id);
                     $("#EditProductName").val(data.Name || data.name);
                     $("#EditProductPrice").val(data.Price || data.price);

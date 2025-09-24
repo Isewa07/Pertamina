@@ -21,12 +21,7 @@ class m_product extends CI_Model {
 
     public function update($id, $data)
     {
-        $this->db->where('ID', $id);
-        return $this->db->update('tabProducts', $data);
-    }
-
-    public function updateProduct($id, $data)
-    {
+        $data['dtUpdatedAt'] = date('Y-m-d H:i:s');
         $this->db->where('ID', $id);
         return $this->db->update('tabProducts', $data);
     }
