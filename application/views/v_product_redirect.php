@@ -88,5 +88,32 @@ $(document).ready(function () {
         ]
     });
 
+    // === HANDLE DELETE ===
+    $(document).on("click", ".btn-delete", function () {
+        let id = $(this).data("id");
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This product will be deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "<?= site_url('Product/deleteRedirect/') ?>" + id,
+                    type: "POST",
+                    success: function () {
+                        Swal.fire("Deleted!", "Product deleted successfully", "success");
+                        $('#productTable').DataTable().ajax.reload();
+                    },
+                    error: function (xhr) {
+                        Swal.fire("Error", xhr.responseText, "error");
+                    }
+                });
+            }
+        });
+    });
+
 });
 </script>

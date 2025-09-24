@@ -83,7 +83,7 @@
              <div class="row mb-3">
                 <label class="col-sm-2 col-form-label">For Sale</label>
                 <div class="col-sm-10">
-                    <select id="ProductSale" name="is_sale" class="form-control">
+                    <select id="ProductSale" name="ProductSale" class="form-control">
                         <option value="1">For Sale</option>
                         <option value="0">Not For Sale</option>
                     </select>

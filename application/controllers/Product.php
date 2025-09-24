@@ -15,7 +15,7 @@ class Product extends CI_Controller {
             'Name'   => $this->input->post('ProductName'),
             'Price'  => $this->input->post('ProductPrice'),
             'Stock'  => $this->input->post('ProductStock'),
-            'Is_sell' => $this->input->post('ForSale') ? 1 : 0
+            'Is_sell' => $this->input->post('ProductSale') ? 1 : 0
         );
 
         if ($this->m_product->save($data)) {
@@ -24,6 +24,20 @@ class Product extends CI_Controller {
             echo json_encode(array("status" => "error", "message" => "Failed to insert"));
         }
     }
+
+    public function saveRedirect()
+    {
+        $data = array(
+            'Name'   => $this->input->post('ProductName'),
+            'Price'  => $this->input->post('ProductPrice'),
+            'Stock'  => $this->input->post('ProductStock'),
+            'Is_sell' => $this->input->post('ProductSale') ? 1 : 0
+        );
+
+        $this->m_product->save($data);
+        redirect('Product/redirect_view');
+    }
+
 
     public function getProduct()
     {
@@ -61,6 +75,13 @@ class Product extends CI_Controller {
     {
         $this->m_product->softDeleteProduct($id);
         echo json_encode(['status' => true]);
+    }
+
+    public function deleteRedirect($id)
+    {
+        $this->m_product->softDeleteProduct($id);
+        echo json_encode(['status' => true]);
+        redirect('Product/redirect_view');
     }
 
     public function redirect_view()
