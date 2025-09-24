@@ -60,6 +60,13 @@
                     <span>Modal View</span></a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo site_url('Product/redirect_view'); ?>">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Redirect View</span>
+                </a>
+            </li>
+
            
 
         </ul>

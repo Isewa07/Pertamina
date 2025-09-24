@@ -63,5 +63,37 @@ class Product extends CI_Controller {
         echo json_encode(['status' => true]);
     }
 
+    public function redirect_view()
+    {
+        $data['products'] = $this->m_product->get_all(); 
+        $this->load->view('v_header');
+        $this->load->view('v_product_redirect', $data);
+        $this->load->view('v_footer');
+    }
+
+    public function add_redirect()
+    {
+        $this->load->view('v_header');
+        $this->load->view('v_product_add');
+        $this->load->view('v_footer');
+    }
+
+    public function edit_redirect($id)
+    {
+        if ($this->input->post()) {
+            $this->m_product->update($id, $this->input->post());
+            redirect('Home/redirect_view');
+        }
+        $data['product'] = $this->m_product->get_by_id($id);
+        $this->load->view('v_header');
+        $this->load->view('v_product_edit', $data);
+        $this->load->view('v_footer');
+    }
+
+    public function delete_redirect($id)
+    {
+        $this->m_product->delete($id);
+        redirect('Home/redirect_view');
+}
 
 }
