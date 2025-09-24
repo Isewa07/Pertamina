@@ -27,16 +27,28 @@ class Product extends CI_Controller {
 
     public function saveRedirect()
     {
+        $id = $this->input->post('ProductID'); // hidden input dari form edit
+
         $data = array(
-            'Name'   => $this->input->post('ProductName'),
-            'Price'  => $this->input->post('ProductPrice'),
-            'Stock'  => $this->input->post('ProductStock'),
-            'Is_sell' => $this->input->post('ProductSale') ? 1 : 0
+            'Name'    => $this->input->post('ProductName'),
+            'Price'   => $this->input->post('ProductPrice'),
+            'Stock'   => $this->input->post('ProductStock'),
+            'Is_sell' => $this->input->post('ProductSale') == 1 ? 1 : 0
         );
 
-        $this->m_product->save($data);
+        if ($id) {
+            // Update data
+            $this->m_product->update($id, $data);
+            $this->session->set_flashdata('success', 'Product updated successfully');
+        } else {
+            // Insert data baru
+            $this->m_product->save($data);
+            $this->session->set_flashdata('success', 'Product added successfully');
+        }
+
         redirect('Product/redirect_view');
     }
+
 
 
     public function getProduct()
@@ -101,10 +113,16 @@ class Product extends CI_Controller {
 
     public function edit_redirect($id)
     {
-        $data['product'] = $this->m_product->get_by_id($id);
+        $data['product'] = $this->m_product->getProductById($id);
         $this->load->view('v_header');
         $this->load->view('v_product_edit', $data);
         $this->load->view('v_footer');
     }
+    
+
+    // public function redirect_view() {
+    //     $data['products'] = $this->m_product->get_all();
+    //     $this->load->view('v_product_redirect', $data);
+    // }
 
 }

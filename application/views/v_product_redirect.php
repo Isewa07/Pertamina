@@ -1,119 +1,66 @@
- <!-- Begin Page Content -->
-                <div class="container-fluid">
+<!-- application/views/v_product_redirect.php -->
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Product Redirect</h1>
+        <a href="<?php echo site_url('Product/add_redirect'); ?>" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Product
+        </a>
+    </div>
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Redirect Product</h1>
-                        <a href="<?php echo site_url('Product/add_redirect'); ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="addProduct"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Add Product</a>
-                    </div>
+    <?php if ($this->session->flashdata('success')): ?>
+        <div class="alert alert-success">
+            <?= $this->session->flashdata('success'); ?>
+        </div>
+    <?php endif; ?>
 
-                    
+    <?php if ($this->session->flashdata('error')): ?>
+        <div class="alert alert-danger">
+            <?= $this->session->flashdata('error'); ?>
+        </div>
+    <?php endif; ?>
 
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Content Column -->
-                        <div class="col-lg-12 mb-4">
-
-                            <!-- Project Card Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Product</h6>
-                                </div>
-                                <div class="card-body">
-                                    <table id="productTable" class="table table-bordered table-striped" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Product Name</th>
-                                                <th>Price</th>
-                                                <th>Stock</th>
-                                                <th>For Sale</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
-                            </div>                        
-                    </div>
-                </div>
-                <!-- /.container-fluid -->
-            </div>
-            <!-- End of Main Content -->
-
-<script>
-$(document).ready(function () {
-
-    let table = $('#productTable').DataTable({
-        ajax: {
-            url: '<?= site_url('Product/getProduct') ?>',
-            type: 'GET',
-            dataSrc: ''
-        },
-        columns: [
-            {
-            data: null,
-            render: function (data, type, row, meta) {
-                return meta.row + 1; // otomatis nomor urut
-            },
-            orderable: false,
-            searchable: false
-            },
-            { "data": 'Name' },
-            { "data": 'Price' },
-            { "data": 'Stock' },
-            {
-                data: 'Is_sell',
-                render: function (data, type, row) {
-                    return data == 1 ? "For Sale" : "Not For Sale";
-                }
-            },
-            {
-                data: null,
-                render: function (data, type, row) {
-                    return `
-                        <button class="btn btn-sm btn-primary btn-edit" data-id="${row.ID}">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="${row.ID}">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    `;
-                },
-                orderable: false,
-                searchable: false
-            }
-        ]
-    });
-
-    // === HANDLE DELETE ===
-    $(document).on("click", ".btn-delete", function () {
-        let id = $(this).data("id");
-
-        Swal.fire({
-            title: "Are you sure?",
-            text: "This product will be deleted!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "<?= site_url('Product/deleteRedirect/') ?>" + id,
-                    type: "POST",
-                    success: function () {
-                        Swal.fire("Deleted!", "Product deleted successfully", "success");
-                        $('#productTable').DataTable().ajax.reload();
-                    },
-                    error: function (xhr) {
-                        Swal.fire("Error", xhr.responseText, "error");
-                    }
-                });
-            }
-        });
-    });
-
-});
-</script>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <?php if (!empty($products)): ?>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%">#</th>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>For Sale</th>
+                            <th style="width: 15%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $no=1; foreach($products as $row): ?>
+                            <tr>
+                                <td><?php echo $no++; ?></td>
+                                <td><?php echo htmlspecialchars($row->Name, ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo number_format($row->Price, 0, ',', '.'); ?></td>
+                                <td><?php echo htmlspecialchars($row->Stock, ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td>
+                                    <?php echo ($row->Is_sell == 1) ? 'For Sale' : 'Not For Sale'; ?>
+                                </td>
+                                <td>
+                                    <a href="<?php echo site_url('Product/edit_redirect/'.$row->ID); ?>" class="btn btn-warning btn-sm">
+                                        Edit
+                                    </a>
+                                    <a href="<?php echo site_url('Product/delete/'.$row->ID); ?>" 
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>Tidak ada data produk.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

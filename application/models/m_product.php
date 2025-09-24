@@ -32,4 +32,6 @@ class m_product extends CI_Model {
         return $this->db->update('tabProducts', ['dtDeletedAt' => date('Y-m-d H:i:s')]);
     }
 
+    
+
 }

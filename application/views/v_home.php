@@ -181,7 +181,7 @@ $(document).ready(function () {
             {
             data: null,
             render: function (data, type, row, meta) {
-                return meta.row + 1; // otomatis nomor urut
+                return meta.row + 1; 
             },
             orderable: false,
             searchable: false
