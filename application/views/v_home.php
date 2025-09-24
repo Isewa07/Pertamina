@@ -24,7 +24,19 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Product</h6>
                                 </div>
                                 <div class="card-body">
-                                    
+                                    <table id="productTable" class="table table-bordered table-striped" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Product Name</th>
+                                                <th>Price</th>
+                                                <th>Stock</th>
+                                                <th>For Sale</th>
+                                                <th>Action Button</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
                             </div>                        
                     </div>
@@ -34,6 +46,8 @@
             <!-- End of Main Content -->
 
 
+
+  <!-- Modal Add -->
  <div class="modal" id="modalAdd" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -87,11 +101,116 @@
 </div>
 
 
+<!-- Modal Edit -->
+ <div class="modal" id="modalEdit" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Edit Product</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+      <div class="modal-body">
+        <form id="formAddProduct">
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Product Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="ProductName" name="ProductName" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Product Price</label>
+                <div class="col-sm-10">
+                    <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
+                        class="form-control" id="ProductPrice" name="ProductPrice" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Product Stock</label>
+                <div class="col-sm-10">
+                    <input type="text" oninput="this.value=this.value.replace(/[^0-9]/g,'');" 
+                        class="form-control" id="ProductStock" name="ProductStock" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ForSale" name="ForSale" value="1">
+                        <label class="form-check-label" for="ForSale">
+                            For Sale
+                        </label>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="editBtn">Submit</button>
+       
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
 $(document).ready(function () {
+
     $("#addProduct").click(function () {
         $("#modalAdd").modal("show"); // open modal
     });
+    
+    let table = $('#productTable').DataTable({
+        ajax: {
+            url: '<?= site_url('Product/getProduct') ?>',
+            type: 'GET',
+            dataSrc: ''
+        },
+        columns: [
+            {
+            data: null,
+            render: function (data, type, row, meta) {
+                return meta.row + 1; // otomatis nomor urut
+            },
+            orderable: false,
+            searchable: false
+            },
+            { "data": 'Name' },
+            { "data": 'Price' },
+            { "data": 'Stock' },
+            {
+                data: 'Is_sell',
+                render: function (data, type, row) {
+                    return data == 1 ? "For Sale" : "Not For Sale";
+                }
+            },
+            {
+            data: null,
+            render: function (data, type, row) {
+                return `
+                    <button class="btn btn-sm btn-primary btn-edit" data-id="${row.product_id}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-delete" data-id="${row.product_id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                `;
+            },
+            orderable: false,
+            searchable: false
+             }
+            // contoh tambahan kolom:
+            // {
+            //     "data": 'qty',
+            //     "render": function(data, type, row) {
+            //         return data + ` item`;
+            //     }
+            // }
+        ]
+    });
+    
+    // Add product
     $("#addBtn").click(function () {
         let name  = $("#ProductName").val().trim();
         let price = $("#ProductPrice").val().trim();
@@ -189,6 +308,9 @@ $(document).ready(function () {
                                 timer: 2000
                             });
                             $("#formAddProduct")[0].reset();
+                            $("#modalAdd").modal("hide");
+                            // table.ajax.reload(null, false); // reload datatable
+                            $('#productTable').DataTable().ajax.reload();
                         } else {
                             Swal.fire({
                                 icon: "error",
@@ -215,8 +337,10 @@ $(document).ready(function () {
             $(this).removeClass("is-invalid");
         }
     });
+
 });
 </script>
+
 
 
 
