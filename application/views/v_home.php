@@ -187,7 +187,12 @@ $(document).ready(function () {
             searchable: false
             },
             { "data": 'Name' },
-            { "data": 'Price' },
+            { 
+                data: 'Price',
+                render: function (data, type, row) {
+                    return new Intl.NumberFormat('id-ID').format(data);
+                }
+            },
             { "data": 'Stock' },
             {
                 data: 'Is_sell',

@@ -21,15 +21,18 @@ class m_product extends CI_Model {
 
     public function update($id, $data)
     {
-        $data['dtUpdatedAt'] = date('Y-m-d H:i:s');
+        //$data['dtUpdatedAt'] = date('Y-m-d H:i:s');
+        $this->db->set('dtUpdatedAt', 'NOW()', FALSE);
         $this->db->where('ID', $id);
         return $this->db->update('tabProducts', $data);
     }
 
     public function softDeleteProduct($id)
     {
+        $this->db->set('dtDeletedAt', 'NOW()', FALSE);
         $this->db->where('ID', $id);
-        return $this->db->update('tabProducts', ['dtDeletedAt' => date('Y-m-d H:i:s')]);
+        return $this->db->update('tabProducts');
+        //return $this->db->update('tabProducts', ['dtDeletedAt' => date('Y-m-d H:i:s')]);
     }
 
     
